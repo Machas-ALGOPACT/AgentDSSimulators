@@ -5,3 +5,7 @@ python-dotenv
 pandas
 numpy
 scikit-learn
+datasets
+joblib
+xgboost
+pyarrow
