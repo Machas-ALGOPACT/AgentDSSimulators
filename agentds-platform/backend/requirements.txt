@@ -1,6 +1,7 @@
-# Placeholder for requirements
 fastapi
 uvicorn
+pydantic
+python-dotenv
 pandas
 numpy
 scikit-learn
