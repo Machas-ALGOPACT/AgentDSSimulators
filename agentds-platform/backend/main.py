@@ -7,7 +7,7 @@ from backend.common.logging.logger import setup_logger
 from backend.insurance.router import router as insurance_router
 from backend.healthcare.router import router as healthcare_router
 # from backend.manufacturing.router import router as manufacturing_router
-# from backend.commerce.router import router as commerce_router
+from backend.commerce.router import router as commerce_router
 # from backend.food_production.router import router as food_router
 # from backend.retail_banking.router import router as banking_router
 
@@ -59,7 +59,7 @@ app.include_router(healthcare_router, prefix="/api/v1")
 
 # Future Domains (Uncomment when routers are created)
 # app.include_router(manufacturing_router, prefix="/api/v1")
-# app.include_router(commerce_router, prefix="/api/v1")
+app.include_router(commerce_router, prefix="/api/v1")
 # app.include_router(food_router, prefix="/api/v1")
 # app.include_router(banking_router, prefix="/api/v1")
 
