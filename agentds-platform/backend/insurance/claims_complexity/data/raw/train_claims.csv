@@ -1,0 +1,6 @@
+ClaimID,PolicyID,ClaimDate,ClaimType,ReportedDamage,NumParties,Description,ClaimComplexityLabel,FraudLabel
+CLM-000002,POL-000005,2023/4/6 2:32,Theft/Comprehensive,942.0350234,1,"This claim involves a theft incident affecting a single vehicle, resulting in a loss amounting to $942.04. Fortunately, there were no injuries reported during this event.",Simple,0
+CLM-000003,POL-000010,2024/2/13 4:09,Fender-Bender,8242.200484,2,"A minor fender-bender involving two vehicles resulted in damages totaling $8,242.20, but fortunately, no injuries were reported in the incident.",Simple,0
+CLM-000004,POL-000012,2023/10/4 8:37,Fender-Bender,9452.744495,2,"This fender-bender involved two vehicles, resulting in significant damage amounting to $9,452.74. Fortunately, there were no injuries reported from the accident.",Simple,0
+CLM-000005,POL-000026,2023/5/10 23:21,Theft/Comprehensive,813.5274116,1,"This claim involves the theft of a single vehicle, resulting in damages amounting to $813.53. Fortunately, no injuries were reported in this incident.",Simple,1
+CLM-000099,POL-001522,2023/6/15 12:00,Collision,50000.0,3,"Major collision involving multiple vehicles and bodily injury.",Complex,0

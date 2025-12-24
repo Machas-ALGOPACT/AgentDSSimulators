@@ -1,0 +1,15 @@
+pandas
+numpy
+scikit-learn
+xgboost
+lightgbm
+# catboost
+pyyaml
+python-dotenv
+optuna
+matplotlib
+seaborn
+jupyter
+fastapi
+pydantic
+uvicorn
