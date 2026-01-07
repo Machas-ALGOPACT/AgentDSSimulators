@@ -1,8 +1,14 @@
 import os
+import sys
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
+
+# Ensure src module is importable
+current_dir = os.path.dirname(os.path.abspath(__file__))
+if current_dir not in sys.path:
+    sys.path.insert(0, current_dir)
 
 from src.utils.config import load_config
 from src.utils.logger import setup_logger, get_default_log_path
@@ -11,6 +17,7 @@ from src.data.validator import DataValidator
 from src.preprocessing.merging import DataMerger
 from src.preprocessing.cleaning import DataCleaner
 from src.models.baseline import BaselineModel
+from src.utils.persistence import save_object
 
 def main():
     # 1. Load Configuration
@@ -59,6 +66,13 @@ def main():
     tfe = TextFeatureEngineer(config)
     df = tfe.extract_basic_text_features(df, 'Description')
     df, vectorizer = tfe.fit_transform_tfidf(df, 'Description')
+    # Persist TF-IDF vectorizer for later inference
+    try:
+        vec_path = os.path.join(config['paths']['models'], 'tfidf_vectorizer.joblib')
+        save_object(vectorizer, vec_path)
+        logger.info(f"Saved TF-IDF vectorizer to {vec_path}")
+    except Exception as e:
+        logger.warning(f"Failed to save TF-IDF vectorizer: {e}")
     
     # 7.3 Aggregate Features
     from src.features.aggregation import AggregateFeatureEngineer
@@ -70,27 +84,58 @@ def main():
     
     # 7.4 Encode Categorical
     df = fe.encode_categorical_features(df)
+
+    # 7.5 Feature Scaling
+    from src.preprocessing.scaling import ScalerWrapper
+    scaler = ScalerWrapper(config, method='standard')
+    # Determine numeric columns from config if available
+    num_cols = [c for c in config.get('features', {}).get('numerical', []) if c in df.columns]
+    if num_cols:
+        df[num_cols] = scaler.fit_transform(df[num_cols])
+        # Persist scaler for inference
+        try:
+            scaler_path = os.path.join(config['paths']['models'], 'scaler.joblib')
+            save_object(scaler.scaler, scaler_path)
+            logger.info(f"Saved scaler to {scaler_path}")
+        except Exception as e:
+            logger.warning(f"Failed to save scaler: {e}")
     
     # 8. Feature Selection for Modeling
+    from src.preprocessing.pipeline import PreprocessingPipeline
+
     target_col = config['data']['target_col']
-    
-    # Drop non-numeric and target columns for X
-    drop_cols = [target_col, config['data']['id_col'], config['data']['join_col'], 'ClaimDate', 'Description', 'ClaimType', 'VehicleType', 'PolicyStart', 'PolicyEnd']
-    # Also drop original categorical columns that were encoded (if any remained) or just select numeric
-    
-    X = df.drop(columns=[c for c in drop_cols if c in df.columns])
-    X = X.select_dtypes(include=[np.number]) # Final safety check
-    
+
+    # Fit a preprocessing pipeline to encapsulate TF-IDF + scaling and persist it
+    pipeline = PreprocessingPipeline(config)
+    pipeline.fit(df)
+    X = pipeline.transform(df)
+
+    # Persist the fitted pipeline for later inference
+    try:
+        pipeline_path = os.path.join(config['paths']['models'], 'preprocessing_pipeline.joblib')
+        pipeline.save(pipeline_path)
+        logger.info(f"Saved preprocessing pipeline to {pipeline_path}")
+    except Exception as e:
+        logger.warning(f"Failed to save preprocessing pipeline: {e}")
+
     logger.info(f"Final feature set shape: {X.shape}")
     logger.info(f"Features: {X.columns.tolist()[:10]} ...")
-    
+
     y = df[target_col]
-    
+
     # Encode Target
     le = LabelEncoder()
     y_encoded = le.fit_transform(y)
     logger.info(f"Target classes: {le.classes_}")
     
+    # Persist LabelEncoder for inference
+    try:
+        le_path = os.path.join(config['paths']['models'], 'label_encoder.joblib')
+        save_object(le, le_path)
+        logger.info(f"Saved LabelEncoder to {le_path}")
+    except Exception as e:
+        logger.warning(f"Failed to save LabelEncoder: {e}")
+
     # 8. Train/Test Split
     try:
         if len(np.unique(y_encoded)) > 1:
@@ -187,6 +232,13 @@ def main():
         
         # Encode
         df_test = fe.encode_categorical_features(df_test)
+        # Apply scaler to numeric columns (if available)
+        try:
+            num_cols_test = [c for c in num_cols if c in df_test.columns]
+            if num_cols_test:
+                df_test[num_cols_test] = scaler.transform(df_test[num_cols_test])
+        except Exception as e:
+            logger.warning(f"Scaler transform failed on test set: {e}")
         
         # Align Features (Ensure test has same columns as train X)
         missing_cols = set(X.columns) - set(df_test.columns)
@@ -199,7 +251,12 @@ def main():
         # Generate Submission
         from src.evaluation.submission import generate_submission
         test_ids = test_claims[config['data']['id_col']]
-        generate_submission(model, X_test_final, test_ids, le.classes_, output_dir=config['paths']['outputs'])
+        # Load label encoder for inverse transform
+        try:
+            le_loaded = load_object(os.path.join(config['paths']['models'], 'label_encoder.joblib'))
+        except Exception:
+            le_loaded = le  # Fallback to in-memory encoder
+        generate_submission(model, X_test_final, test_ids, le_loaded.classes_, output_dir=config['paths']['outputs'])
         
     logger.info("Pipeline execution finished successfully.")
 

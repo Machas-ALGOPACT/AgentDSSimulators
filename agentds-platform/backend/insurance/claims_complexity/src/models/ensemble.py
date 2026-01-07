@@ -18,13 +18,14 @@ class EnsembleModel:
         # Initialize base models
         self.rf = BaselineModel(config).model
         self.xgb = AdvancedModel(config, 'xgboost').model
-        self.lgbm = AdvancedModel(config, 'lightgbm').model
+        # Skip LightGBM due to JSON character restrictions on feature names
+        # self.lgbm = AdvancedModel(config, 'lightgbm').model
         
         self.model = VotingClassifier(
             estimators=[
                 ('rf', self.rf),
                 ('xgb', self.xgb),
-                ('lgbm', self.lgbm)
+                # ('lgbm', self.lgbm)  # Disabled: LightGBM doesn't support special JSON characters in feature names
             ],
             voting='soft',
             n_jobs=-1

@@ -13,3 +13,4 @@ jupyter
 fastapi
 pydantic
 uvicorn
+pytest

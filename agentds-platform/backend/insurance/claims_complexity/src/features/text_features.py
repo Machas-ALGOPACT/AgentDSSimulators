@@ -37,6 +37,7 @@ class TextFeatureEngineer:
     def fit_transform_tfidf(self, df, text_col):
         """
         Fit TF-IDF and transform the text column. Returns df with new columns.
+        Sanitizes feature names for LightGBM compatibility.
         """
         if text_col not in df.columns:
             logger.warning(f"Text column {text_col} not found for TF-IDF.")
@@ -46,7 +47,12 @@ class TextFeatureEngineer:
         text_data = df[text_col].astype(str).fillna('')
         tfidf_matrix = self.vectorizer.fit_transform(text_data)
         
-        feature_names = [f"tfidf_{name}" for name in self.vectorizer.get_feature_names_out()]
+        # Sanitize feature names for LightGBM compatibility (no special JSON characters)
+        feature_names = []
+        for name in self.vectorizer.get_feature_names_out():
+            sanitized = f"tfidf_{name}".replace(' ', '_').replace('[', '').replace(']', '').replace('(', '').replace(')', '').replace(':', '').replace(',', '').replace('"', '').replace('{', '').replace('}', '')
+            feature_names.append(sanitized)
+        
         tfidf_df = pd.DataFrame(tfidf_matrix.toarray(), columns=feature_names, index=df.index)
         
         logger.info(f"Created {len(feature_names)} TF-IDF features")
