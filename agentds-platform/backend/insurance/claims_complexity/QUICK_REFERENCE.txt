@@ -1,0 +1,76 @@
+QUICK REFERENCE - CLAIMS COMPLEXITY MODEL
+================================================================================
+
+REQUIRED INPUTS:
+  ClaimID              text                CLM-001234
+  PolicyID             text                POL-001234
+  ClaimDate            datetime            2026-01-08 14:30
+  ClaimType            dropdown            Collision/Comprehensive
+  ReportedDamage       number              5000.50
+  NumParties           integer             2
+  Description          text (50+ chars)    Detailed description...
+
+OPTIONAL INPUTS (auto-imputed if blank):
+  HolderAge            number              35.0
+  VehicleType          text                Sedan
+  AnnualMileage        number              10000.0
+  LocationUrban        radio               1=Urban, 0=Rural
+  CreditScore          number (0-1)        0.75
+  PolicyStart          date                2023-01-08
+  PolicyEnd            date                2024-01-08
+
+OUTPUT:
+  prediction           string              "Simple" | "Moderate" | "Complex"
+  confidence           float               0.85 (show as 85%)
+  probabilities        dict                {"Simple": 0.15, "Moderate": 0.41, "Complex": 0.44}
+
+CLAIM TYPE OPTIONS:
+  Collision/Comprehensive
+  Liability/Bodily Injury
+  Theft/Comprehensive
+  Fender-Bender
+  Vandalism
+  Other
+
+VEHICLE TYPE OPTIONS:
+  Sedan, SUV, Truck, Coupe, Hatchback, Minivan, Motorcycle, Other
+
+VALIDATION RULES:
+  ClaimDate: Valid datetime format
+  ReportedDamage: >= 0
+  NumParties: >= 1
+  Description: >= 50 characters
+  HolderAge: 16-120 if provided
+  CreditScore: 0-1 if provided
+
+SAMPLE REQUEST:
+{
+  "claim_id": "CLM-001",
+  "policy_id": "POL-001",
+  "claim_date": "2026-01-08 14:30",
+  "claim_type": "Collision/Comprehensive",
+  "reported_damage": 500.50,
+  "num_parties": 1,
+  "description": "Minor parking lot damage to rear bumper. Single vehicle incident."
+}
+
+SAMPLE RESPONSE:
+{
+  "prediction": "Moderate",
+  "confidence": 0.413,
+  "probabilities": {
+    "Simple": 0.215,
+    "Moderate": 0.413,
+    "Complex": 0.372
+  },
+  "claim_id": "CLM-001"
+}
+
+API ENDPOINT:
+  POST /predict
+  Content-Type: application/json
+
+TESTING:
+  python single_input_test.py
+
+================================================================================
