@@ -16,7 +16,7 @@ MODEL_PATH = ARTIFACTS_DIR / "model.pkl"
 PIPELINE_PATH = ARTIFACTS_DIR / "pipeline.pkl"
 METADATA_PATH = ARTIFACTS_DIR / "metadata.json"
 
-TARGET_COL = "ed_cost"
+TARGET_COL = "ed_cost_next3y_usd"
 
 def train_model():
     logger.info("Starting training for ED Cost Forecasting...")

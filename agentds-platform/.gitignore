@@ -50,3 +50,6 @@ model_data/
 # Logs
 *.log
 logs/
+
+# Local Data
+backend/data/

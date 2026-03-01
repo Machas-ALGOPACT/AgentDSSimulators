@@ -16,7 +16,7 @@ MODEL_PATH = ARTIFACTS_DIR / "model.pkl"
 PIPELINE_PATH = ARTIFACTS_DIR / "pipeline.pkl"
 METADATA_PATH = ARTIFACTS_DIR / "metadata.json"
 
-TARGET_COL = "readmitted" # Validated from similar datasets, might need adjustment if actual column differs.
+TARGET_COL = "readmit_30d"
 
 def train_model():
     logger.info("Starting training for Readmission Prediction...")
