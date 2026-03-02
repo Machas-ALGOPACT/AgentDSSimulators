@@ -1,0 +1,28 @@
+{
+  "task": "Discharge Readiness",
+  "n_samples": 1000,
+  "n_features": 6,
+  "feature_names": [
+    "unit_type",
+    "admission_reason",
+    "age",
+    "sex",
+    "insurance",
+    "zip3"
+  ],
+  "numeric_features": [
+    "age",
+    "zip3"
+  ],
+  "categorical_features": [
+    "unit_type",
+    "admission_reason",
+    "sex",
+    "insurance"
+  ],
+  "target_col": "discharge_ready_day11",
+  "target_distribution": {
+    "1": 656,
+    "0": 344
+  }
+}

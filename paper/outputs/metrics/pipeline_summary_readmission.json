@@ -1,0 +1,36 @@
+{
+  "task": "Readmission Prediction",
+  "n_samples": 5000,
+  "n_features": 10,
+  "feature_names": [
+    "primary_dx",
+    "los_days",
+    "acuity_emergent",
+    "charlson_band",
+    "ed_visits_6m",
+    "discharge_weekday",
+    "age",
+    "sex",
+    "insurance",
+    "zip3"
+  ],
+  "numeric_features": [
+    "los_days",
+    "acuity_emergent",
+    "charlson_band",
+    "ed_visits_6m",
+    "discharge_weekday",
+    "age",
+    "zip3"
+  ],
+  "categorical_features": [
+    "primary_dx",
+    "sex",
+    "insurance"
+  ],
+  "target_col": "readmit_30d",
+  "target_distribution": {
+    "1": 2521,
+    "0": 2479
+  }
+}

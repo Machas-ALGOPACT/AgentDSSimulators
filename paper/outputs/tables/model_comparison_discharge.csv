@@ -1,0 +1,5 @@
+Model,Accuracy,Macro_F1
+Logistic Regression,0.635,0.4243
+Random Forest,0.56,0.4902
+Gradient Boosting,0.57,0.4546
+Ensemble (Voting),0.59,0.4533

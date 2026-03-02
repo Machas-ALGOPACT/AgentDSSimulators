@@ -1,0 +1,85 @@
+# Healthcare ML Paper Analysis — Walkthrough
+
+## Result: 11/11 Tasks Passed ✓
+
+```
+python paper/run_analysis.py
+```
+
+---
+
+## What Was Built
+
+```
+d:\2025\AgentDS\AgentDSSimulators\paper\
+├── run_analysis.py            # Single entry point
+├── data_helpers.py            # Reads local CSVs, merges patients.csv
+├── README.md
+└── analysis/
+    ├── pipeline_analysis.py   # TASK 1
+    ├── feature_importance.py  # TASK 2
+    ├── roc_curves.py          # TASK 3
+    ├── pr_curves.py           # TASK 4
+    ├── confusion_matrices.py  # TASK 5
+    ├── cost_analysis.py       # TASK 6
+    ├── model_comparison.py    # TASK 7
+    ├── ablation_study.py      # TASK 8
+    ├── feature_distributions.py # TASK 9
+    ├── latex_outputs.py       # TASK 10
+    └── pipeline_diagram.py    # TASK 12
+```
+
+---
+
+## Outputs Generated
+
+### Plots (15 PNG files)
+| File | Notes |
+|---|---|
+| `pipeline_diagram.png` | 7-stage flow diagram |
+| `feature_importance_readmission.png` | charlson_band, ed_visits_6m top features |
+| `feature_importance_ed_cost.png` | prior_ed_cost_5y_usd dominant |
+| `feature_importance_discharge.png` | age, admission_reason key features |
+| `roc_curve_readmission.png` | **AUC = 0.710** |
+| `roc_curve_discharge.png` | **AUC = 0.538** |
+| `pr_curve_readmission.png` | **AP = 0.674** |
+| `pr_curve_discharge.png` | **AP = 0.686** |
+| `confusion_matrix_readmission.png` | |
+| `confusion_matrix_discharge.png` | |
+| `pred_vs_actual_cost.png` | **MAE = $463  R² = 0.890** |
+| `residual_distribution_cost.png` | Near-symmetric, low bias |
+| `los_vs_readmission.png` | LOS boxplot by readmission |
+| `ed_visits_distribution.png` | Prior-6m visits histogram |
+| `charlson_vs_readmission.png` | Rate increases with CCI band |
+
+### Tables (6 CSV files)
+| File | Key finding |
+|---|---|
+| `model_comparison_readmission.csv` | GB best: Acc=0.691 F1=0.691 |
+| `model_comparison_discharge.csv` | LR best Acc, RF best F1 |
+| `feature_importance_*.csv` | Top-10 ranked features per task |
+| `ablation_study_readmission.csv` | +patient features → F1: 0.619→0.648 |
+
+### Ablation Study Results
+| Variant | F1 | AUC |
+|---|---|---|
+| Base (raw features) | 0.619 | 0.656 |
+| + los_squared | 0.615 | 0.658 |
+| + ed_visits_rate | 0.613 | 0.654 |
+| + weekday_binary | 0.610 | 0.654 |
+| + patient features (Full) | **0.648** | **0.687** |
+
+> Patient demographics (age, sex, insurance) provide the most meaningful uplift.
+
+---
+
+## Known Issues Fixed
+
+- **Discharge column mismatch**: [stays_train.csv](file:///d:/2025/AgentDS/AgentDSSimulators/agentds-platform/backend/data/healthcare/stays_train.csv) uses `discharge_ready_day11` (not `ready_for_discharge` as in backend). Fixed in [data_helpers.py](file:///d:/2025/AgentDS/AgentDSSimulators/paper/data_helpers.py).
+
+## How to Run
+
+```powershell
+# From d:\2025\AgentDS\AgentDSSimulators\
+d:\2025\AgentDS\AgentDSSimulators\venv\Scripts\python.exe paper/run_analysis.py
+```

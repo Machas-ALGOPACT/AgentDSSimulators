@@ -1,1 +1,4 @@
 agentds-platform/backend/insurance/claims_complexity/outputs/
+*__pycache__
+doc.docx
+backend/data/healthcare/*

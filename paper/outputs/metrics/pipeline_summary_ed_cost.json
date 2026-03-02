@@ -1,0 +1,32 @@
+{
+  "task": "ED Cost Forecasting",
+  "n_samples": 2000,
+  "n_features": 7,
+  "feature_names": [
+    "primary_chronic",
+    "prior_ed_visits_5y",
+    "prior_ed_cost_5y_usd",
+    "age",
+    "sex",
+    "insurance",
+    "zip3"
+  ],
+  "numeric_features": [
+    "prior_ed_visits_5y",
+    "prior_ed_cost_5y_usd",
+    "age",
+    "zip3"
+  ],
+  "categorical_features": [
+    "primary_chronic",
+    "sex",
+    "insurance"
+  ],
+  "target_col": "ed_cost_next3y_usd",
+  "target_distribution": {
+    "min": 306.88,
+    "max": 11184.61,
+    "mean": 3908.25191,
+    "std": 1822.401920306473
+  }
+}
